@@ -1,0 +1,153 @@
+<html lang="zh-CN">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@callmebill/lxgw-wenkai-web@latest/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+.content {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  padding: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 左边大块 */
+.block.big {
+  flex: 2;                 /* 占 2 份宽度 */
+  min-height: 400px;       /* 想让它高一点就设 */
+}
+
+/* 右边一列 */
+.right-col {
+  flex: 1;                 /* 占 1 份宽度 */
+  display: flex;
+  flex-direction: column;  /* 上下排列 */
+  gap: 12px;
+}
+
+/* 右边两个小块 */
+.block.small {
+  flex: 1;                 /* 上下平分高度 */
+}
+
+/* 通用卡片样式 */
+.block {
+  background: linear-gradient(135deg, #eab308, #ea580c);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.block h2 {
+  margin: 0;
+  font-size: clamp(20px, 2vw, 30px);
+  font-weight: 700;
+  font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.block p {
+  margin: 8px 0 0;
+  color: #3f2a00;
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 手机自动变上下 */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+}
+  .headstyle {
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 40px 20px;
+    height: clamp(250px, 20vh, 350px);
+    max-width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+  }
+
+  .headstyle img {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+  .headstyle .text {
+  display: flex;
+  flex-direction: column;     /* 标题在上，小字在下 */
+  text-align: left;
+  gap: 8px;
+}
+
+.headstyle h1 {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 44px);
+  font-weight: 800;
+  line-height: 1.1;
+  font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.headstyle p {
+  margin: 0;
+  color: rgb(135, 145, 145);
+  font-size: 15px;        
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  max-width: 520px;
+   font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+</style>
+<meta charset="UTF-8">
+<meta  name="author" content="dalang">
+<meta  name="description" content="i dont know EN apologize~"> 
+<title>dalang的博客(新手初尝试)</title>
+</head>
+<body>
+<header class="headstyle">
+<img src="touxiang.jpg" alt="头像"  >
+<div class="text">
+    <h1>Dalang</h1>
+    <p>本网页是写着玩的,不定时更新,里面可能会有我半夜发疯想的东西和一些记录啥啥啥的</p>
+</div>
+</header>
+<main>
+  <section class="content">
+
+    <!-- 左边大块 -->
+    <div class="block big">
+      <h2>健身板块</h2>
+      <p>这里是健身相关的内容。</p>
+    </div>
+
+    <!-- 右边两块 -->
+    <div class="right-col">
+      <div class="block small">
+        <h2>碎碎念板块</h2>
+        <p>这里是碎碎念。</p>
+      </div>
+
+      <div class="block small">
+        <h2>记录板块</h2>
+        <p>这里是日常记录。</p>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+
+
+</body>
+
+</html>          
