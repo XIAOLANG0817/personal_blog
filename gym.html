@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>健身板块 | Dalang</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@callmebill/lxgw-wenkai-web@latest/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #0f0f0f;
+      color: #e5e5e5;
+    }
+
+    /* 顶部固定 */
+    .headstyle {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      height: clamp(180px, 22vh, 260px);
+      background: #1a1a1a;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .headstyle h1 {
+      margin: 0 0 6px;
+      font-size: clamp(24px, 3.5vw, 40px);
+      font-weight: 700;
+      color: #f5f5f5;
+      letter-spacing: 0.02em;
+    }
+
+    .headstyle p {
+      margin: 0;
+      font-size: 14px;
+      color: #888;
+      line-height: 1.6;
+      max-width: 560px;
+    }
+
+    /* 内容区 */
+    .content {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      padding: 16px;
+      width: 100%;
+    }
+
+    .left-col,
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .left-col { flex: 2; }
+    .right-col { flex: 1; }
+
+    .block {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .block h2 {
+      margin: 0 0 10px;
+      font-size: clamp(18px, 1.8vw, 24px);
+      font-weight: 700;
+      color: #f0f0f0;
+      letter-spacing: 0.02em;
+    }
+
+    .block p {
+      margin: 0;
+      color: #999;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .block.big {
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .block.big p {
+      margin-top: auto;
+    }
+
+    /* 记录列表 */
+    .log {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+    }
+
+    .log li {
+      padding: 10px 0;
+      border-bottom: 1px solid #262626;
+      color: #bbb;
+      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .log li:last-child {
+      border-bottom: none;
+    }
+
+    .log .date {
+      color: #666;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    /* 手机 */
+    @media (max-width: 768px) {
+      .content {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="headstyle">
+    <h1>健身板块</h1>
+    <p>记录一些我平时的训练计划和吃的热量和蛋白质</p>
+  </header>
+
+  <main class="content">
+
+    <!-- 左：训练记录 -->
+    <div class="left-col">
+      <div class="block big">
+        <h2>训练计划</h2>
+        <ul class="log">
+          <li><span>背</span><span class="date">周一</span></li>
+          <li><span>胸</span><span class="date">周二</span></li>
+          <li><span>腿</span><span class="date">周三</span></li>
+          <li><span>休息</span><span class="date">周四</span></li>
+          <li><span>手 + 核心</span><span class="date">周五</span></li>
+          <li><span>休息</span><span class="date">周六</span></li>
+          <li><span>小臂 + 核心</span><span class="date">周五</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 右：三个小板块 -->
+    <div class="right-col">
+
+      <div class="block">
+        <h2>饮食</h2>
+        <ul class="log">
+          <li><span>蛋白质</span><span class="date">160g</span></li>
+          <li><span>热量</span><span class="date">2200 kcal</span></li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <h2>体重</h2>
+        <ul class="log">
+          <li><span>第一周</span><span class="date">89 kg</span></li>
+          <li><span></span><span class="date"></span></li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <h2>照片</h2>
+        <p>以后可能会更新。</p>
+      </div>
+
+    </div>
+
+  </main>
+
+</body>
+</html>
