@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>music player host</title>
+  <style>
+    /* 这是"音乐宿主"页，被各个页面的 iframe 加载。
+       它本身不显示任何界面，只负责播放音频。
+       关键：iframe 设了 name，同源导航时浏览上下文会被复用，
+       所以里面的音频在页面跳转时不会中断。 */
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+      height: 100%;
+    }
+    audio { display: none; }
+  </style>
+</head>
+<body>
+
+<audio id="audio" preload="metadata"></audio>
+
+<script>
+(function () {
+  /* ============================================================
+     歌单：改这里即可（所有页面共用这一份）
+     路径说明：mp3 放在网站根目录，用 ASCII 文件名。
+     因为原文件名含空格、&、括号、中文，在 file:// 下容易解析出错。
+     ============================================================ */
+  const SONGS = [
+    { title: 'come again — m-flo',                          file: 'song1.mp3' },
+    { title: 'Mary Jane (All Night Long) — Mary J. Blige',  file: 'song2.mp3' },
+    { title: '夏天的风 — 蓝心羽',                            file: 'song3.mp3' },
+    { title: 'From The Start — Laufey & Spencer Stewart',   file: 'song4.mp3' },
+  ];
+
+  /* 播完最后一首后是否自动从头循环 */
+  const LOOP_PLAYLIST = false;
+
+  const STORE_KEY = 'dalang-music-state';
+
+  var audio = document.getElementById('audio');
+  var current = -1;
+  var playing = false;
+
+  /* ---------- 记忆播放状态 ----------
+     即使 iframe 被重建（浏览器差异 / 用户刷新），
+     也能从上次的位置继续，而不是从头开始。 */
+  function saveState(pos) {
+    try {
+      sessionStorage.setItem(STORE_KEY, JSON.stringify({
+        current: current,
+        pos: (typeof pos === 'number' ? pos : audio.currentTime) || 0,
+        playing: playing,
+        at: Date.now()
+      }));
+    } catch (e) {}
+  }
+
+  function loadState() {
+    try {
+      return JSON.parse(sessionStorage.getItem(STORE_KEY) || 'null');
+    } catch (e) { return null; }
+  }
+
+  /* ---------- 通知外层页面（更新挂件显示） ---------- */
+  function notify(type) {
+    var msg = {
+      source: 'dalang-music',
+      type: type,                                  // 'state' | 'ready'
+      playing: playing,
+      index: current,
+      title: (SONGS[current] && SONGS[current].title) || '',
+      count: SONGS.length,
+      time: audio.currentTime || 0,
+      duration: audio.duration || 0,
+      // 歌单也发过去，页面可以自己渲染列表，不必重复维护
+      songs: SONGS.map(function (s) { return { title: s.title }; })
+    };
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage(msg, '*');
+      }
+    } catch (e) {}
+  }
+
+  /* ---------- 播放控制 ---------- */
+  function playIndex(index, startAt) {
+    if (!SONGS.length) return;
+    index = Math.max(0, Math.min(index, SONGS.length - 1));
+    current = index;
+    audio.src = SONGS[index].file;
+
+    var doPlay = function () {
+      if (startAt && startAt > 0 && startAt < (audio.duration || Infinity)) {
+        try { audio.currentTime = startAt; } catch (e) {}
+      }
+      var p = audio.play();
+      if (p && p.catch) {
+        p.catch(function () {
+          playing = false;
+          notify('state');
+        });
+      }
+    };
+
+    if (audio.readyState >= 1) {
+      doPlay();
+    } else {
+      audio.addEventListener('loadedmetadata', doPlay, { once: true });
+    }
+  }
+
+  function play() {
+    if (current < 0) { playIndex(0); return; }
+    if (audio.src) {
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () { playing = false; notify('state'); });
+    } else {
+      playIndex(current);
+    }
+  }
+
+  function pause() { audio.pause(); }
+
+  function toggle() {
+    if (audio.paused) play(); else pause();
+  }
+
+  function next() {
+    if (!SONGS.length) return;
+    playIndex((current + 1) % SONGS.length);
+  }
+
+  function stop() {
+    playing = false;
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+    current = -1;
+    try { sessionStorage.removeItem(STORE_KEY); } catch (e) {}
+    notify('state');
+  }
+
+  /* ---------- 音频事件 ---------- */
+  audio.addEventListener('play',  function () { playing = true;  saveState(); notify('state'); });
+  audio.addEventListener('pause', function () { playing = false; saveState(); notify('state'); });
+  audio.addEventListener('timeupdate', function () { saveState(); });
+  audio.addEventListener('loadedmetadata', function () { notify('state'); });
+  audio.addEventListener('ended', function () {
+    if (current < SONGS.length - 1) {
+      playIndex(current + 1);
+    } else if (LOOP_PLAYLIST) {
+      playIndex(0);
+    } else {
+      stop();          // 全部播完 → 外层挂件自动消失
+    }
+  });
+  audio.addEventListener('error', function () {
+    if (!audio.src) return;
+    playing = false;
+    notify('state');
+  });
+
+  /* ---------- 接收外层页面的指令 ---------- */
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || d.target !== 'dalang-music') return;
+
+    switch (d.action) {
+      case 'toggle':   toggle(); break;
+      case 'play':     play(); break;
+      case 'pause':    pause(); break;
+      case 'next':     next(); break;
+      case 'stop':     stop(); break;
+      case 'playIndex': playIndex(d.index, d.startAt); break;
+      case 'getState':
+        // 外层页面加载完就来问一次状态，好把挂件恢复成正确的样子
+        notify('state');
+        break;
+    }
+  });
+
+  /* ---------- 初始化：如果之前正在播，就从上次位置继续 ---------- */
+  (function init() {
+    var st = loadState();
+    if (!st) { notify('ready'); return; }
+
+    if (st.current >= 0 && st.current < SONGS.length) {
+      current = st.current;
+      var elapsed = st.playing ? (Date.now() - (st.at || Date.now())) / 1000 : 0;
+      var resumeAt = Math.max(0, (st.pos || 0) + elapsed);
+
+      audio.src = SONGS[current].file;
+      audio.addEventListener('loadedmetadata', function () {
+        if (st.playing) {
+          // 上一页在播放 → 继续播（位置已按离开时间补偿）
+          if (resumeAt < (audio.duration || Infinity)) {
+            try { audio.currentTime = resumeAt; } catch (e) {}
+          }
+          var p = audio.play();
+          if (p && p.catch) p.catch(function () { playing = false; notify('state'); });
+        } else {
+          try { audio.currentTime = resumeAt; } catch (e) {}
+          notify('state');
+        }
+      }, { once: true });
+    }
+    notify('ready');
+  })();
+})();
+</script>
+
+</body>
+</html>

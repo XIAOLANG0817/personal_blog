@@ -13,10 +13,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
 <style>
-  .friend-links a {
-  transition: transform .22s ease, box-shadow .22s ease;
-}
-.friend-links a:hover { transform: translateY(-6px) scale(1.08); }
 /* ============ 主题变量：想换配色只改这里 ============ */
 :root {
   --bg:          #14102b;   /* 页面底色：深靛蓝，比纯紫柔和 */
@@ -52,6 +48,46 @@ body {
 }
 
 h1, h2, h3, p { margin: 0; }
+
+/* ============================================================
+   和dalang一起听歌 按钮（配色沿用站点青绿主色）
+   ============================================================ */
+.listen-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  align-self: flex-start;   /* 不撑满整行 */
+  margin-top: 4px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #0f766e, #0d9488);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(13, 148, 136, .35);
+  transition: transform .22s cubic-bezier(.2, .7, .3, 1),
+              box-shadow .22s ease,
+              background .22s ease;
+}
+
+.listen-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 24px rgba(13, 148, 136, .5);
+}
+
+.listen-btn:active { transform: translateY(0) scale(.99); }
+
+.listen-btn .ico { width: 17px; height: 17px; flex: 0 0 auto; }
+
+/* 播放中：变暗，文字由脚本改成「停止听歌」 */
+.listen-btn.is-playing {
+  background: linear-gradient(135deg, #3a3a4a, #2a2a36);
+  box-shadow: none;
+  color: #ddd;
+}
 
 /* 中文长串/长网址安全换行 */
 .block p, .headstyle .text > p { overflow-wrap: break-word; word-break: break-word; }
@@ -97,6 +133,12 @@ h1, h2, h3, p { margin: 0; }
   justify-content: center;
 }
 
+/* ============================================================
+   友链悬停动画
+   关键：transition 写在基础状态里（不是 :hover 里），
+   这样鼠标「进入」和「移开」都会平滑过渡；
+   只写在 :hover 里的话，移开时会瞬间跳回去，等于没有动画。
+   ============================================================ */
 .friend-links a {
   display: block;
   width: 44px;
@@ -105,13 +147,26 @@ h1, h2, h3, p { margin: 0; }
   overflow: hidden;
   background: rgba(255, 255, 255, .12);
   border: 1px solid rgba(255, 255, 255, .28);
-  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  /* 进入 + 移开都走这条过渡 */
+  transition: transform .22s cubic-bezier(.2, .7, .3, 1),
+              box-shadow .22s ease,
+              border-color .22s ease;
 }
 
 .friend-links a:hover {
-  transform: translateY(-3px) scale(1.06);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, .4);
-  border-color: rgba(255, 255, 255, .8);
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, .45),
+              0 0 0 3px rgba(121, 184, 243, .55);
+  border-color: #fff;
+}
+
+/* 键盘 Tab 聚焦时给同样反馈（无障碍） */
+.friend-links a:focus-visible {
+  outline: none;
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, .45),
+              0 0 0 3px rgba(121, 184, 243, .8);
+  border-color: #fff;
 }
 
 .friend-links a img {
@@ -218,7 +273,15 @@ h1, h2, h3, p { margin: 0; }
 .block.big p { color: #d8fbf5; }
 .block.small p { color: var(--ink-dark-2); }
 
-/* 哑铃图片链接 */
+/* ============================================================
+   哑铃图片链接：悬停时脉冲发光
+   （transform 过渡 + 逐帧动画可以同时用，互不冲突）
+   ============================================================ */
+@keyframes gymGlow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(94, 234, 212, .65), 0 8px 18px rgba(0, 0, 0, .35); }
+  50%      { box-shadow: 0 0 0 10px rgba(94, 234, 212, .12), 0 8px 18px rgba(0, 0, 0, .35); }
+}
+
 .block.big a img {
   display: block;
   max-width: 100%;
@@ -226,10 +289,13 @@ h1, h2, h3, p { margin: 0; }
   height: auto;
   margin-top: 16px;
   border-radius: 12px;
-  transition: transform .2s ease;
+  transition: transform .22s cubic-bezier(.2, .7, .3, 1);
 }
 
-.block.big a img:hover { transform: scale(1.04); }
+.block.big a:hover img {
+  transform: scale(1.05) translateY(-4px);
+  animation: gymGlow 1.5s ease-in-out infinite;
+}
 
 /* ============ 响应式（这一整段必须完整闭合） ============ */
 @media (max-width: 768px) {
@@ -271,39 +337,174 @@ h1, h2, h3, p { margin: 0; }
   .headstyle .text { align-items: center; text-align: center; width: 100%; padding: 0 4px; }
   .headstyle .text > p { max-width: 100%; }
 }
+
+/* ============================================================
+   正文里的文字链接：下划线从中间展开
+   （想用的话，给 <a> 加 class="textlink" 即可）
+   ============================================================ */
+.textlink {
+  color: #8be9d0;
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.textlink::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width .3s ease, left .3s ease;
+}
+
+.textlink:hover { color: #eafff9; }
+.textlink:hover::after { width: 100%; left: 0; }
+
+/* ============================================================
+   尊重系统「减少动态效果」设置（无障碍，做动画时建议都加上）
+   ============================================================ */
+/* ============================================================
+   页面加载器（点击链接后出现：转圈 + 顶部进度条 + 遮罩）
+   ============================================================ */
+#page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: rgba(20, 16, 43, .74);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+
+#page-loader.show { opacity: 1; visibility: visible; }
+
+/* 转圈：用 conic-gradient 做渐变环 + 遮罩挖空中心 */
+.spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, #5eead4 130deg, #a78bfa 260deg, #f0abfc 360deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 6px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 6px));
+  animation: spin .85s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-text {
+  position: absolute;
+  margin-top: 104px;
+  color: var(--ink-dim);
+  font-size: 13px;
+  letter-spacing: .1em;
+  animation: breathe 1.4s ease-in-out infinite;
+}
+
+@keyframes breathe { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+
+/* 顶部进度条：点击后先冲到 85%，真正跳转时补满，视觉上不"卡" */
+#page-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0;
+  z-index: 10000;
+  background: linear-gradient(90deg, #5eead4, #a78bfa, #f0abfc);
+  box-shadow: 0 0 12px rgba(167, 139, 250, .75);
+  opacity: 0;
+  transition: width .45s ease, opacity .2s ease;
+}
+
+#page-progress.show { opacity: 1; }
+
+/* 避免加载时重复点击 / 页面横向抖动 */
+html.is-loading { overflow: hidden; }
+
+/* 尊重「减少动态效果」：不转圈，只留遮罩与文字 */
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
+  .loader-text { animation: none; }
+  #page-progress { transition: opacity .2s ease; }
+
+  /* 链接悬停动画同步关闭 */
+  .friend-links a,
+  .block.big a img,
+  .textlink::after { transition: none; }
+
+  .friend-links a:hover { transform: none; }
+  .listen-btn:hover { transform: none; }
+
+  .block.big a:hover img {
+    transform: none;
+    animation: none;
+  }
+}
 </style>
 </head>
 
 <body>
+
+<!-- ======= 页面加载：顶部进度条 + 转圈遮罩 ======= -->
+<div id="page-progress"></div>
+<div id="page-loader" role="status" aria-live="polite">
+  <div class="spinner"></div>
+  <div class="loader-text">正在前往…</div>
+</div>
+
 <header class="headstyle">
 
   <!-- ======= 左栏：头像 + 友链（图片超链接） ======= -->
   <div class="head-left">
     <img class="avatar" src="touxiang.jpg" alt="头像">
 
-    <div class="friend-links-title">友链</div>
+    <div class="friend-links-title">友情链接</div>
 
-  
+    <!--
+      ↓↓↓ 友链就在下面这几行 ↓↓↓
+      换链接：改 href="对方网址"
+      换图标：改 src="图标图片路径"（建议正方形图，会自动裁成圆角方块）
+      加友链：复制一整行 <a>...</a> 粘在后面即可，会自动排成两列
+
+      说明：保持 target="_blank" 新标签打开（对友链更友好）。
+      注意——新标签打开时本页不会卸载，所以左上角的转圈加载动画
+      只在站内跳转（如点哑铃进 gym.html）时才会出现。
+    -->
     <nav class="friend-links">
-      <a href="https://miso2233.github.io/" title="友链一" target="_blank" rel="noopener">
+      <a href="https://miso2233.github.io/" title="miso" target="_blank" rel="noopener">
         <img src="you1.png" alt="miso">
       </a>
-      <a href="https://map1e-suk1.github.io" title="友链二" target="_blank" rel="noopener">
+      <a href="https://map1e-suk1.github.io" title="gald_god" target="_blank" rel="noopener">
         <img src="you2.jpg" alt="gald_god">
       </a>
-      <a href="https://piyuanzhoulv.github.io/" title="空位" target="_blank" rel="noopener">
+      <a href="https://kur0sia.github.io/" title="kur0sia!" target="_blank" rel="noopener">
         <img src="you3.jpg" alt="kur0sia!">
       </a>
-      <a href="https://example.com/friend4" title="空位" target="_blank" rel="noopener">
-        <img src="you4.png" alt="滚木">
+      <a href="#" title="圆神" target="_blank" rel="noopener">
+        <img src="you4.png" alt="圆神">
       </a>
     </nav>
+    <!-- ↑↑↑ 友链结束 ↑↑↑ -->
   </div>
 
-  <!-- ======= 右栏：标题 + 简介 ======= -->
+  <!-- ======= 右栏：标题 + 简介 + 听歌按钮 ======= -->
   <div class="text">
     <h1>Dalang</h1>
     <p>本网页是写着玩的,不定时更新,里面可能会有我半夜发疯想的东西和一些记录啥啥啥的</p>
+
+    <!-- 全站听歌：点了之后在站内逛不会断（音乐宿主在 music-player.html） -->
+    <button class="listen-btn" id="listenBtn" type="button">
+      <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/>
+      </svg>
+      <span id="listenBtnText">和dalang一起听歌</span>
+    </button>
   </div>
 
 </header>
@@ -311,6 +512,7 @@ h1, h2, h3, p { margin: 0; }
 <main>
   <section class="content">
 
+    <!-- 左边大块 -->
     <div class="block big">
       <h2>健身板块</h2>
       <p>这里是健身相关的内容。</p>
@@ -324,17 +526,151 @@ h1, h2, h3, p { margin: 0; }
     <div class="right-col">
       <div class="block small">
         <h2>碎碎念板块</h2>
-        <p>这里是碎碎念(待开发)</p>
+        <p>这里是碎碎念。</p>
       </div>
 
       <div class="block small">
         <h2>记录板块</h2>
-        <p>这里是日常记录(待开发)</p>
+        <p>这里是日常记录。</p>
       </div>
     </div>
 
   </section>
 </main>
+
+<script>
+(function () {
+  var loader   = document.getElementById('page-loader');
+  var progress = document.getElementById('page-progress');
+  var textEl   = loader.querySelector('.loader-text');
+
+  var isShowing = false;
+  var autoReset = null;   // 兜底定时器：外部站点打不开时，别让加载器一直转
+
+  function show(label) {
+    // 关键：先清掉上一轮遗留的兜底/自动收尾定时器。
+    // 放在 isShowing 判断之前——否则新一轮会继承旧定时器，
+    // 转圈会被上一轮的计时提前收掉。
+    clearTimeout(autoReset);
+    autoReset = null;
+
+    if (isShowing) return;
+    isShowing = true;
+
+    if (label) textEl.textContent = label;
+
+    loader.classList.add('show');
+    progress.classList.add('show');
+    document.documentElement.classList.add('is-loading');
+
+    // 两段式进度条：先冲到 85%，剩下的等真正跳转时补满
+    requestAnimationFrame(function () {
+      progress.style.width = '85%';
+    });
+  }
+
+  // 收掉加载器并把进度条复位（供兜底逻辑和后退恢复使用）
+  function reset() {
+    clearTimeout(autoReset);
+    progress.style.width = '100%';
+
+    setTimeout(function () {
+      loader.classList.remove('show');
+      document.documentElement.classList.remove('is-loading');
+
+      setTimeout(function () {
+        progress.classList.remove('show');
+        progress.style.transition = 'none';
+        progress.style.width = '0';
+        requestAnimationFrame(function () {
+          progress.style.transition = '';
+        });
+        isShowing = false;
+      }, 240);
+    }, 180);
+  }
+
+  // 后退/前进从浏览器缓存恢复时，把状态清干净
+  window.addEventListener('pageshow', function (e) {
+    clearTimeout(autoReset);
+    isShowing = false;
+    loader.classList.remove('show');
+    progress.classList.remove('show');
+    progress.style.width = '0';
+    document.documentElement.classList.remove('is-loading');
+    if (e.persisted) {
+      // 从 bfcache 恢复，稍等一拍再收尾，避免闪烁
+      setTimeout(function () { progress.style.width = '0'; }, 0);
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+
+    var href = a.getAttribute('href') || '';
+
+    // 跳过：空链接、页内锚点、javascript:、下载、新标签打开、修饰键点击
+    if (!href || href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return;
+    if (a.hasAttribute('download')) return;
+    if (a.dataset.newtab !== undefined || a.target === '_blank') return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+    var isExternal = /^https?:\/\//i.test(href);
+
+    show(isExternal ? '正在前往友链…' : '正在进入站内页面…');
+
+    if (isExternal) {
+      // 外部站点：加载时间不可控，先让动画显示 300ms，再放行跳转
+      e.preventDefault();
+      var target = a.href;
+      autoReset = setTimeout(function () {
+        // 兜底：对方站点打不开时，6 秒后收掉加载器，避免一直转圈
+        reset();
+      }, 6000);
+
+      setTimeout(function () {
+        clearTimeout(autoReset);
+        window.location.href = target;
+      }, 300);
+      return;
+    }
+
+    // 站内跳转：不做拦截，交给浏览器正常导航。
+    // 本页卸载前加载器会一直显示，正好盖住新页面的白屏。
+  });
+
+  // 站内跳转时把进度条补满，视觉上收尾
+  window.addEventListener('beforeunload', function () {
+    if (isShowing) progress.style.width = '100%';
+  });
+})();
+</script>
+
+<!-- ==================== 听歌按钮接线 ==================== -->
+<script>
+(function () {
+  var btn     = document.getElementById('listenBtn');
+  var btnText = document.getElementById('listenBtnText');
+  if (!btn) return;
+
+  btn.addEventListener('click', function () {
+    // 已在放歌 → 暂停/继续；没放过 → 从第 1 首开始
+    window.musicPlayer.start();
+  });
+
+  // 播放状态变化 → 同步按钮文字与样式
+  document.addEventListener('musicstatechange', function (e) {
+    var d = e.detail || {};
+    btn.classList.toggle('is-playing', !!d.playing);
+    btnText.textContent = d.playing ? '停止听歌' : '和dalang一起听歌';
+  });
+})();
+</script>
+
+<!-- 全站听歌挂件：自动注入隐藏播放器 + 右下角挂件。
+     其他页面也加这一行即可共用同一个播放器（换页不中断） -->
+<script src="music-widget.js"></script>
 
 </body>
 </html>

@@ -11,16 +11,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --bg:      #0f0f0f;
+      --card:    #1a1a1a;
+      --line:    #2a2a2a;
+      --text:    #e5e5e5;
+      --dim:     #888;
+      --accent:  #1db954;
+      --accent2: #5eead4;
+    }
+
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: #0f0f0f;
-      color: #e5e5e5;
+      background: var(--bg);
+      color: var(--text);
     }
 
-    /* 顶部固定 */
     .headstyle {
       position: sticky;
       top: 0;
@@ -50,7 +59,16 @@
       max-width: 560px;
     }
 
-    /* 内容区 */
+    .headstyle a {
+      color: var(--accent2);
+      text-decoration: none;
+      font-size: 14px;
+      margin-top: 8px;
+      display: inline-block;
+    }
+
+    .headstyle a:hover { text-decoration: underline; }
+
     .content {
       display: flex;
       flex-direction: row;
@@ -70,8 +88,8 @@
     .right-col { flex: 1; }
 
     .block {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
+      background: var(--card);
+      border: 1px solid var(--line);
       border-radius: 14px;
       padding: 24px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -92,20 +110,19 @@
       line-height: 1.7;
     }
 
-.photo-row {
-  display: flex;
-  gap: 12px;          /* 间距，比用 margin 干净 */
-}
-.photo-row img {
-  flex: 1 1 0;        /* 每张等分宽度 */
-  min-width: 0;       /* ⚠️ 关键，见下方说明 */
-  width: 100%;
-  height: 200px;      /* 固定高，保证高度一致 */
-  object-fit: cover;  /* 裁切填满，不拉伸变形 */
-  border-radius: 10px;
-  display: block;
-}
-
+    .photo-row {
+      display: flex;
+      gap: 12px;
+    }
+    .photo-row img {
+      flex: 1 1 0;
+      min-width: 0;
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      display: block;
+    }
 
     .block.big {
       min-height: 320px;
@@ -113,11 +130,8 @@
       flex-direction: column;
     }
 
-    .block.big p {
-      margin-top: auto;
-    }
+    .block.big p { margin-top: auto; }
 
-    /* 记录列表 */
     .log {
       list-style: none;
       padding: 0;
@@ -134,9 +148,7 @@
       gap: 12px;
     }
 
-    .log li:last-child {
-      border-bottom: none;
-    }
+    .log li:last-child { border-bottom: none; }
 
     .log .date {
       color: #666;
@@ -144,11 +156,118 @@
       flex-shrink: 0;
     }
 
-    /* 手机 */
+    /* ============================================================
+       音乐板块
+       ============================================================ */
+    .music-block {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .music-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .listen-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 11px 22px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), #128a41);
+      color: #fff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(29, 185, 84, .28);
+      transition: transform .2s cubic-bezier(.2,.7,.3,1), box-shadow .2s ease;
+    }
+
+    .listen-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 10px 24px rgba(29, 185, 84, .42);
+    }
+
+    .listen-btn:active { transform: translateY(0) scale(.99); }
+    .listen-btn .ico { width: 18px; height: 18px; flex: 0 0 auto; }
+
+    .listen-btn.is-playing {
+      background: linear-gradient(135deg, #444, #2b2b2b);
+      box-shadow: none;
+      color: #ddd;
+    }
+
+    /* 歌单列表 */
+    .track-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .track-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 12px;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      color: #bbb;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background .18s ease, color .18s ease, border-color .18s ease;
+    }
+
+    .track-list li:hover { background: #222; color: #eee; }
+
+    .track-list li.active {
+      background: #1f2e24;
+      border-color: #2f5b3d;
+      color: #eafff2;
+    }
+
+    .track-list .num {
+      width: 18px;
+      text-align: right;
+      color: #666;
+      font-size: 12px;
+      flex: 0 0 auto;
+    }
+
+    .track-list li.active .num { color: var(--accent); }
+
+    .track-list .name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .track-list .state { color: var(--accent); font-size: 12px; flex: 0 0 auto; }
+
+    .music-note {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.8;
+      margin-top: 12px;
+    }
+
     @media (max-width: 768px) {
-      .content {
-        flex-direction: column;
-      }
+      .content { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .listen-btn:hover { transform: none; }
     }
   </style>
 </head>
@@ -162,8 +281,9 @@
 
   <main class="content">
 
-    <!-- 左：训练记录 -->
+    <!-- 左：训练记录 + 音乐 -->
     <div class="left-col">
+
       <div class="block big">
         <h2>训练计划</h2>
         <ul class="log">
@@ -176,6 +296,27 @@
           <li><span>小臂 + 核心</span><span class="date">周五</span></li>
         </ul>
       </div>
+
+      <!-- ==================== 音乐板块 ==================== -->
+      <div class="block music-block">
+        <div class="music-head">
+          <h2>歌单</h2>
+          <button class="listen-btn" id="listenBtn" type="button">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/>
+            </svg>
+            <span id="listenBtnText">和dalang一起听歌(不支持谷歌)</span>
+          </button>
+        </div>
+
+        <!-- 歌单由脚本从全站播放器读取自动生成（不用在这里重复写歌名）-->
+        <ul class="track-list" id="trackList"></ul>
+
+        <p class="music-note">
+          音乐会跟着你在站内逛，切页面不会断(不支持谷歌和edge)
+        </p>
+      </div>
+
     </div>
 
     <!-- 右：三个小板块 -->
@@ -198,17 +339,112 @@
       </div>
 
       <div class="block">
-        <span><h2>照片</h2></span>
+        <h2>照片</h2>
         <p>别问为什么全网都用的同几张照片,本人实在是不会拍张,一张别人拍的一张拍了40分钟才好...</p>
         <div class="photo-row">
-        <img src="jianshen1.jpg">
-        <img src="jianshen2.jpg">
+          <img src="jianshen1.jpg" alt="训练照片1">
+          <img src="jianshen2.jpg" alt="训练照片2">
         </div>
       </div>
 
     </div>
 
   </main>
+
+  <script>
+  /* 歌单点击 → 交给全站播放器（挂件由 music-widget.js 生成） */
+  (function () {
+    var listEl   = document.getElementById('trackList');
+    var btn      = document.getElementById('listenBtn');
+    var btnText  = document.getElementById('listenBtnText');
+    var songs    = [];
+    var currentIndex = -1;   // 当前曲目（-1 = 还没开始过）
+    var playing  = false;    // 是否正在播
+
+    function render() {
+      listEl.innerHTML = '';
+      songs.forEach(function (song, i) {
+        var isCurrent = (i === currentIndex);
+
+        var li = document.createElement('li');
+        li.className = isCurrent ? 'active' : '';
+
+        var num = document.createElement('span');
+        num.className = 'num';
+        num.textContent = (i + 1);
+
+        var name = document.createElement('span');
+        name.className = 'name';
+        name.textContent = song.title;
+
+        var state = document.createElement('span');
+        state.className = 'state';
+        // 只有当前曲目才显示状态文字；暂停时高亮保留
+        if (isCurrent) state.textContent = playing ? '♪ 播放中' : 'II 已暂停';
+
+        li.appendChild(num);
+        li.appendChild(name);
+        li.appendChild(state);
+
+        li.addEventListener('click', function () {
+          if (i === currentIndex) {
+            // 点当前曲目 = 暂停/继续（高亮保持不变）
+            if (playing) {
+              window.musicPlayer.pause();
+            } else {
+              window.musicPlayer.toggle();
+            }
+          } else {
+            currentIndex = i;
+            playing = true;
+            window.musicPlayer.playIndex(i);
+          }
+          render();
+        });
+
+        listEl.appendChild(li);
+      });
+    }
+
+    function loadSongs() {
+      if (!window.musicPlayer) return;
+      var list = window.musicPlayer.songs();
+      if (list && list.length) {
+        songs = list;
+        render();
+      }
+    }
+
+    btn.addEventListener('click', function () {
+      window.musicPlayer.start();   // 已在放 → 暂停/继续；否则从第 1 首开始
+    });
+
+    // 播放器状态变化 → 同步高亮与按钮文字
+    document.addEventListener('musicstatechange', function (e) {
+      var d = e.detail || {};
+      if (typeof d.index === 'number' && d.index >= 0) currentIndex = d.index;
+      if (!songs.length && d.songs) songs = d.songs;
+      playing = !!d.playing;
+
+      btn.classList.toggle('is-playing', playing);
+      btnText.textContent = playing ? '停止听歌' : '和dalang一起听歌';
+
+      render();
+    });
+
+    // 播放器可能比本脚本晚就绪，轮询几次等它
+    var tries = 0;
+    var timer = setInterval(function () {
+      loadSongs();
+      if (songs.length || ++tries > 20) clearInterval(timer);
+    }, 150);
+
+    render();
+  })();
+  </script>
+
+  <!-- 全站听歌挂件：其他页面也加这一行就能共用同一个播放器 -->
+  <script src="music-widget.js"></script>
 
 </body>
 </html>
