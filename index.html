@@ -1,162 +1,340 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="dalang">
+<meta name="description" content="i dont know EN apologize~">
+<title>dalang的博客(新手初尝试)</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@callmebill/lxgw-wenkai-web@latest/style.css" />
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
 <style>
+  .friend-links a {
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+.friend-links a:hover { transform: translateY(-6px) scale(1.08); }
+/* ============ 主题变量：想换配色只改这里 ============ */
+:root {
+  --bg:          #14102b;   /* 页面底色：深靛蓝，比纯紫柔和 */
+  --header-a:    #3d2b9e;   /* 头部渐变 起 */
+  --header-b:    #6d3ef0;   /* 头部渐变 止 */
+  --card-a:      #0f766e;   /* 健身大卡渐变 起（青绿） */
+  --card-b:      #0d9488;   /* 健身大卡渐变 止 */
+  --card2-a:     #fef3c7;   /* 小卡渐变 起 */
+  --card2-b:     #fcd9a0;   /* 小卡渐变 止 */
+  --ink:         #f4f2ff;   /* 深底上的主文字 */
+  --ink-dim:     #c9c3e8;   /* 深底上的次级文字 */
+  --ink-dark:    #1c1917;   /* 亮卡上的主文字 */
+  --ink-dark-2:  #4a423a;   /* 亮卡上的次级文字 */
+  --radius:      18px;
+  --gap:         14px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  padding: 16px;
+  overflow-x: hidden;   /* 防横向溢出 */
+  background:
+    radial-gradient(900px 500px at 15% -10%, #2a1f6b 0%, transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, #3a1d5e 0%, transparent 55%),
+    var(--bg);
+  color: var(--ink);
+  font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
+  min-height: 100vh;
+}
+
+h1, h2, h3, p { margin: 0; }
+
+/* 中文长串/长网址安全换行 */
+.block p, .headstyle .text > p { overflow-wrap: break-word; word-break: break-word; }
+
+/* ============ 头部：左边挂友链，右边是标题 ============ */
+.headstyle {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 20px;
+  padding: 24px 26px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--header-a), var(--header-b));
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .35);
+}
+
+/* —— 左栏：头像 + 友链 —— */
+.head-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+  padding-right: 20px;
+  border-right: 1px solid rgba(255, 255, 255, .18); /* 与标题区分隔 */
+}
+
+.headstyle .avatar {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 4px solid rgba(255, 255, 255, .9);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+}
+
+/* —— 友链区：图片超链接 —— */
+.friend-links {
+  display: grid;
+  grid-template-columns: repeat(2, 44px);
+  gap: 10px;
+  justify-content: center;
+}
+
+.friend-links a {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .12);
+  border: 1px solid rgba(255, 255, 255, .28);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.friend-links a:hover {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .4);
+  border-color: rgba(255, 255, 255, .8);
+}
+
+.friend-links a img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.friend-links-title {
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+/* —— 右栏：标题 + 简介 —— */
+.headstyle .text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.headstyle h1 {
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: .01em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .25);
+}
+
+.headstyle .text > p {
+  color: var(--ink-dim);
+  font-size: 15px;
+  letter-spacing: .03em;
+  line-height: 1.65;
+  max-width: 560px;
+}
+
+/* ============ 主体两栏 ============ */
 .content {
   display: flex;
   flex-direction: row;
-  gap: 12px;
-  padding: 12px;
+  gap: var(--gap);
+  margin-top: var(--gap);
   width: 100%;
-  box-sizing: border-box;
 }
 
-/* 左边大块 */
+.block {
+  border-radius: var(--radius);
+  padding: 22px 22px 26px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .28);
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, .10);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.block:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .38);
+}
+
+/* 左边大块：青绿渐变 + 浅色文字 */
 .block.big {
-  flex: 2;                 /* 占 2 份宽度 */
-  min-height: 400px;       /* 想让它高一点就设 */
+  flex: 2;
+  min-height: 400px;
+  background: linear-gradient(150deg, var(--card-a), var(--card-b));
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
 }
 
 /* 右边一列 */
 .right-col {
-  flex: 1;                 /* 占 1 份宽度 */
+  flex: 1;
   display: flex;
-  flex-direction: column;  /* 上下排列 */
-  gap: 12px;
+  flex-direction: column;
+  gap: var(--gap);
+  min-width: 0;
 }
 
-/* 右边两个小块 */
+/* 右边两个小块：亮色卡 + 深色文字 */
 .block.small {
-  flex: 1;                 /* 上下平分高度 */
-}
-
-/* 通用卡片样式 */
-.block {
-  background: linear-gradient(135deg, #eab308, #ea580c);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  flex: 1;
+  background: linear-gradient(150deg, var(--card2-a), var(--card2-b));
+  color: var(--ink-dark);
 }
 
 .block h2 {
-  margin: 0;
-  font-size: clamp(30px, 4vw, 40px);
+  font-size: clamp(22px, 2.4vw, 32px);
   font-weight: 700;
-  font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
+  line-height: 1.2;
+  margin-bottom: 10px;
 }
 
 .block p {
-  margin: 6px 0 0;
-  color: #3f2a00;
-  font-size: 24px;
-  line-height: 1.5;
-  font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
-  text-decoration: underline;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 8px 0 0;
 }
 
-/* 手机自动变上下 */
+.block.big p { color: #d8fbf5; }
+.block.small p { color: var(--ink-dark-2); }
+
+/* 哑铃图片链接 */
+.block.big a img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  margin-top: 16px;
+  border-radius: 12px;
+  transition: transform .2s ease;
+}
+
+.block.big a img:hover { transform: scale(1.04); }
+
+/* ============ 响应式（这一整段必须完整闭合） ============ */
 @media (max-width: 768px) {
-  .content {
-    flex-direction: column;
-  }
-}
+  body { padding: 12px; }
+  .content { flex-direction: column; }
+
+  /* 手机上：左栏改为上下堆叠，避免头像+友链并排导致横向溢出 */
   .headstyle {
-    border-radius: 20px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 22px 16px;
+    gap: 14px;
+  }
+
+  .head-left {
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+    padding-right: 0;
+    padding-bottom: 14px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, .18);
+  }
+
+  .headstyle .avatar { width: 88px; height: 88px; }
+
+  /* 友链改为可换行的横向排列，图标多也不会溢出 */
+  .friend-links {
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 40px 20px;
-    height: clamp(250px, 20vh, 350px);
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
     max-width: 100%;
-    text-align: left;
-    box-sizing: border-box;
-    background: linear-gradient(135deg, #0050fd, #5d00ff);
   }
 
-  .headstyle img {
-    width: 128px;
-    height: 128px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-  }
-  .headstyle .text {
-  display: flex;
-  flex-direction: column;     /* 标题在上，小字在下 */
-  text-align: left;
-  gap: 8px;
-}
-
-.headstyle h1 {
-  margin: 0;
-  font-size: clamp(28px, 3vw, 44px);
-  font-weight: 800;
-  line-height: 1.1;
-  font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
-}
-
-.headstyle p {
-  margin: 0;
-  color: rgb(135, 145, 145);
-  font-size: 15px;        
-  letter-spacing: 0.03em;
-  line-height: 1.5;
-  max-width: 520px;
-   font-family: "Lora", "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
-   
-}
-body {
-  background: #3c03b7;   /* 深黑 */
+  /* 标题与简介居中，并留出左右安全边距 */
+  .headstyle .text { align-items: center; text-align: center; width: 100%; padding: 0 4px; }
+  .headstyle .text > p { max-width: 100%; }
 }
 </style>
-<meta charset="UTF-8">
-<meta  name="author" content="dalang">
-<meta  name="description" content="i dont know EN apologize~"> 
-<title>dalang的博客(新手初尝试)</title>
 </head>
-<body >
+
+<body>
 <header class="headstyle">
-<img src="touxiang.jpg" alt="头像"  >
-<div class="text">
+
+  <!-- ======= 左栏：头像 + 友链（图片超链接） ======= -->
+  <div class="head-left">
+    <img class="avatar" src="touxiang.jpg" alt="头像">
+
+    <div class="friend-links-title">友链</div>
+
+  
+    <nav class="friend-links">
+      <a href="https://miso2233.github.io/" title="友链一" target="_blank" rel="noopener">
+        <img src="you1.png" alt="miso">
+      </a>
+      <a href="https://map1e-suk1.github.io" title="友链二" target="_blank" rel="noopener">
+        <img src="you2.jpg" alt="gald_god">
+      </a>
+      <a href="https://piyuanzhoulv.github.io/" title="空位" target="_blank" rel="noopener">
+        <img src="you3.jpg" alt="kur0sia!">
+      </a>
+      <a href="https://example.com/friend4" title="空位" target="_blank" rel="noopener">
+        <img src="you4.png" alt="滚木">
+      </a>
+    </nav>
+  </div>
+
+  <!-- ======= 右栏：标题 + 简介 ======= -->
+  <div class="text">
     <h1>Dalang</h1>
     <p>本网页是写着玩的,不定时更新,里面可能会有我半夜发疯想的东西和一些记录啥啥啥的</p>
-</div>
+  </div>
+
 </header>
+
 <main>
   <section class="content">
 
-    <!-- 左边大块 -->
     <div class="block big">
       <h2>健身板块</h2>
       <p>这里是健身相关的内容。</p>
       <p>本人其实高二才开始接触健身,之前曾经幻想当业余的长跑运动员,结果打球被狠狠地骨折制裁了从此一蹶不振改去健身</p>
       <p>结果减脂减一半压力太大开始暴饮暴食,我的腹肌就仅仅生存了一周就没了,然后再也练不回来了</p>
       <p>说真的我真的要被体测压力死了,我今年努努力看能不能明年争取拿个85以上,哦对了点下面的哑铃可以去我的健身板块</p>
-      <a href="gym.html"><img src="gym.png" ></a>
+      <a href="gym.html"><img src="gym.png" alt="进入健身板块"></a>
     </div>
 
     <!-- 右边两块 -->
     <div class="right-col">
       <div class="block small">
         <h2>碎碎念板块</h2>
-        <p>这里是碎碎念。</p>
+        <p>这里是碎碎念(待开发)</p>
       </div>
 
       <div class="block small">
         <h2>记录板块</h2>
-        <p>这里是日常记录。</p>
+        <p>这里是日常记录(待开发)</p>
       </div>
     </div>
 
   </section>
 </main>
 
-
-
 </body>
-
-</html>          
+</html>

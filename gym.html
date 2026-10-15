@@ -88,9 +88,24 @@
     .block p {
       margin: 0;
       color: #999;
-      font-size: 15px;
+      font-size: 12px;
       line-height: 1.7;
     }
+
+.photo-row {
+  display: flex;
+  gap: 12px;          /* 间距，比用 margin 干净 */
+}
+.photo-row img {
+  flex: 1 1 0;        /* 每张等分宽度 */
+  min-width: 0;       /* ⚠️ 关键，见下方说明 */
+  width: 100%;
+  height: 200px;      /* 固定高，保证高度一致 */
+  object-fit: cover;  /* 裁切填满，不拉伸变形 */
+  border-radius: 10px;
+  display: block;
+}
+
 
     .block.big {
       min-height: 320px;
@@ -142,6 +157,7 @@
   <header class="headstyle">
     <h1>健身板块</h1>
     <p>记录一些我平时的训练计划和吃的热量和蛋白质</p>
+    <a href="index.html">return</a>
   </header>
 
   <main class="content">
@@ -182,8 +198,12 @@
       </div>
 
       <div class="block">
-        <h2>照片</h2>
-        <p>以后可能会更新。</p>
+        <span><h2>照片</h2></span>
+        <p>别问为什么全网都用的同几张照片,本人实在是不会拍张,一张别人拍的一张拍了40分钟才好...</p>
+        <div class="photo-row">
+        <img src="jianshen1.jpg">
+        <img src="jianshen2.jpg">
+        </div>
       </div>
 
     </div>
