@@ -427,6 +427,86 @@ h1, h2, h3, p { margin: 0; }
 /* 避免加载时重复点击 / 页面横向抖动 */
 html.is-loading { overflow: hidden; }
 
+/* ============================================================
+   悬停气泡（tooltip）：鼠标停在元素上显示文字
+   ------------------------------------------------------------
+   用法：给任意元素加 class="tip" 和 data-tip="要显示的文字"
+       <a class="tip" data-tip="miso" href="...">...</a>
+
+   三句关键：
+     content:attr(data-tip)      文字取自 data-tip 属性
+     opacity + visibility        控制显隐（visibility 才能真正不挡鼠标）
+     pointer-events:none         气泡本身不接收鼠标事件，否则会闪烁
+   ============================================================ */
+.tip { position: relative; }
+
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translate(-50%, 4px);
+  background: rgba(12, 12, 20, .96);
+  color: #fff;
+  padding: 6px 11px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, .22);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .5);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;      /* 关键：否则鼠标会被气泡挡住导致闪烁 */
+  transition: opacity .18s ease, transform .18s ease, visibility .18s;
+  z-index: 60;
+}
+
+/* 小三角 */
+.tip::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 4px);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(12, 12, 20, .96);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .18s ease, visibility .18s;
+  z-index: 61;
+}
+
+.tip:hover::after,
+.tip:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+.tip:hover::before,
+.tip:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 元素贴近页面顶部时，用这个让气泡朝下，避免超出屏幕 */
+.tip-bottom::after {
+  bottom: auto;
+  top: calc(100% + 10px);
+  transform: translate(-50%, -4px);
+}
+.tip-bottom:hover::after,
+.tip-bottom:focus-visible::after { transform: translate(-50%, 0); }
+
+.tip-bottom::before {
+  bottom: auto;
+  top: calc(100% + 4px);
+  border-top-color: transparent;
+  border-bottom-color: rgba(12, 12, 20, .96);
+}
+
 /* 尊重「减少动态效果」：不转圈，只留遮罩与文字 */
 @media (prefers-reduced-motion: reduce) {
   .spinner { animation: none; }
@@ -436,7 +516,9 @@ html.is-loading { overflow: hidden; }
   /* 链接悬停动画同步关闭 */
   .friend-links a,
   .block.big a img,
-  .textlink::after { transition: none; }
+  .textlink::after,
+  .tip::after,
+  .tip::before { transition: none; }
 
   .friend-links a:hover { transform: none; }
   .listen-btn:hover { transform: none; }
@@ -472,21 +554,21 @@ html.is-loading { overflow: hidden; }
       换图标：改 src="图标图片路径"（建议正方形图，会自动裁成圆角方块）
       加友链：复制一整行 <a>...</a> 粘在后面即可，会自动排成两列
 
-      说明：保持 target="_blank" 新标签打开（对友链更友好）。
-      注意——新标签打开时本页不会卸载，所以左上角的转圈加载动画
-      只在站内跳转（如点哑铃进 gym.html）时才会出现。
+      悬停显示文字：靠 class="tip" 和 data-tip="文字"
+      （title 属性保留着作为手机端兜底）
+      保持 target="_blank" 新标签打开，对友链更友好。
     -->
     <nav class="friend-links">
-      <a href="https://miso2233.github.io/" title="miso" target="_blank" rel="noopener">
+      <a href="https://miso2233.github.io/" class="tip" data-tip="misp" title="miso" target="_blank" rel="noopener">
         <img src="you1.png" alt="miso">
       </a>
-      <a href="https://map1e-suk1.github.io" title="gald_god" target="_blank" rel="noopener">
+      <a href="https://map1e-suk1.github.io" class="tip" data-tip="maple" title="gald_god" target="_blank" rel="noopener">
         <img src="you2.jpg" alt="gald_god">
       </a>
-      <a href="https://kur0sia.github.io/" title="kur0sia!" target="_blank" rel="noopener">
+      <a href="https://kur0sia.github.io/" class="tip" data-tip="kur0sia!" title="kur0sia!" target="_blank" rel="noopener">
         <img src="you3.jpg" alt="kur0sia!">
       </a>
-      <a href="#" title="圆神" target="_blank" rel="noopener">
+      <a href="https://piyuanzhoulv.github.io/" class="tip" data-tip="圆神" title="圆神" target="_blank" rel="noopener">
         <img src="you4.png" alt="圆神">
       </a>
     </nav>
